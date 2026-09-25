@@ -21,7 +21,7 @@ Root      APatch  ← 必需，见下方"要求"
 | **VoLTE 语音** | ✅ 可用 | IMS 注册成功，走 `com.lge.ims` |
 | 视频通话 (VT) | ✅ 判定已放开 | `persist.dbg.vt_avail_ovr=1` |
 | IPSec（IMS 安全通道） | ✅ 已打通 | 三方 socket 路径已统一改写 |
-| **短信** | ⚠️ 走 CS/CSFB | v0.60 强制回落到 CS。**不走 IMS** |目前仍不可用
+| **短信** | ❌不可用| v0.61 尝试强制回落 CS，目前仍未生效|
 | VoWiFi | ❌ 不支持 | 未做 |
 | 5G NR 上的语音 (VoNR) | ❌ 未验证 | |
 
