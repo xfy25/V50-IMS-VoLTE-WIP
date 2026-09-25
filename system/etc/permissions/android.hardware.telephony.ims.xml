@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Pixel Experience 14 (Android 14) PhoneFactory gates ImsResolver on
+  PackageManager.hasSystemFeature("android.hardware.telephony.ims").
+  Without this feature it logs
+      "IMS is not supported on this device, skipping ImsResolver."
+  and the framework never binds any ImsService.
+
+  This device's /vendor partition carries LG's Android 12 vendor image,
+  which predates that check, so /vendor/etc/permissions/ only has
+  android.hardware.telephony.gsm.xml and android.hardware.telephony.cdma.xml
+  (declaring telephony / calling / data / messaging) and no ims entry.
+
+  SystemConfig scans /system/etc/permissions/*.xml while system_server
+  starts, which happens after post-fs-data where the module is mounted,
+  so this file is picked up.
+-->
+<permissions>
+    <feature name="android.hardware.telephony.ims" />
+</permissions>

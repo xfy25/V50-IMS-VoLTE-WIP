@@ -1,0 +1,251 @@
+LG 桥接类 (classes2.dex, 1546 个) 对 PE 框架的 API 漂移完整清单
+扫描真值：pe_tc(2570) + framework.jar(29432) + services.jar(13799) + libcore/apex(8501)
+阳性对照 5/5 通过。总计 159 个方法、33 个目标类。
+
+=== 已在 v0.25 补空实现（目标类在 telephony-common 里，共 125 个方法 / 16 个类）===
+
+  com/android/internal/telephony/CallManager  (1 个)
+      [已补] notify911NetworkSearch(I)V
+  com/android/internal/telephony/CommandsInterface  (65 个)
+      [已补] changeCallPreference(IILandroid/os/Message;)V
+      [已补] exitVolteE911EmergencyMode(Landroid/os/Message;)V
+      [已补] getIMSNetworkInfo(Landroid/os/Message;)V
+      [已补] loadVolteE911ScanList(IIILandroid/os/Message;)V
+      [已补] notifyImsCallState(IIIILandroid/os/Message;)V
+      [已补] registerCallReady(Landroid/os/Handler;ILjava/lang/Object;)V
+      [已补] registerForCampedMccMncChanged(Landroid/os/Handler;ILjava/lang/Object;)V
+      [已补] registerForLteEmmReject(Landroid/os/Handler;ILjava/lang/Object;)V
+      [已补] registerForLteNetworkInfo(Landroid/os/Handler;ILjava/lang/Object;)V
+      [已补] registerForWcdmaAcceptReceived(Landroid/os/Handler;ILjava/lang/Object;)V
+      [已补] registerForWcdmaNetChanged(Landroid/os/Handler;ILjava/lang/Object;)V
+      [已补] registerForWcdmaNetToKoreaChanged(Landroid/os/Handler;ILjava/lang/Object;)V
+      [已补] registerForWcdmaRejectReceived(Landroid/os/Handler;ILjava/lang/Object;)V
+      [已补] registerHandoffInformation(Landroid/os/Handler;ILjava/lang/Object;)V
+      [已补] registerImsPreference(Landroid/os/Handler;ILjava/lang/Object;)V
+      [已补] registerLteState(Landroid/os/Handler;ILjava/lang/Object;)V
+      [已补] registerNrRegistrationInfo(Landroid/os/Handler;ILjava/lang/Object;)V
+      [已补] registerRrcState(Landroid/os/Handler;ILjava/lang/Object;)V
+      [已补] registerSsacState(Landroid/os/Handler;ILjava/lang/Object;)V
+      [已补] registerUacBarredAlleviation(Landroid/os/Handler;ILjava/lang/Object;)V
+      [已补] registerUacResponse(Landroid/os/Handler;ILjava/lang/Object;)V
+      [已补] sendE911CallState(I)V
+      [已补] sendImsSmsMoStatus(Ljava/lang/String;Landroid/os/Message;)V
+      [已补] sendImsSmsRpMessage(Ljava/lang/String;Landroid/os/Message;)V
+      [已补] sendImsSmsTlMessage(Ljava/lang/String;Landroid/os/Message;)V
+      [已补] setEmergency(IILandroid/os/Message;)V
+      [已补] setIMSEnabled(ZLandroid/os/Message;)V
+      [已补] setImsCallStateForTuneAway(IIIIIILandroid/os/Message;)V
+      [已补] setImsCallStatus(IIIIIIIIIILandroid/os/Message;)V
+      [已补] setImsCfg([ILandroid/os/Message;)V
+      [已补] setImsDataFlushEnabled(ZLandroid/os/Message;)V
+      [已补] setImsRegistrationStatus(IIIIIILandroid/os/Message;)V
+      [已补] setImsSession(IILandroid/os/Message;)V
+      [已补] setImsVoiceDomainStatus(ZILandroid/os/Message;)V
+      [已补] setLteDataCallType(ILjava/lang/String;Landroid/os/Message;)V
+      [已补] setLteProc(ILandroid/os/Message;)V
+      [已补] setModemIntegerItem(IILandroid/os/Message;)V
+      [已补] setModemStringItem(ILjava/lang/String;Landroid/os/Message;)V
+      [已补] setNSRICallInfoTransfer(IILjava/lang/String;Landroid/os/Message;)V
+      [已补] setNormalCallNetworkSearch(IILandroid/os/Message;)V
+      [已补] setOnSIB16Time(Landroid/os/Handler;ILjava/lang/Object;)V
+      [已补] setPeerSimSuspend(ZLandroid/os/Message;)V
+      [已补] setPreferredNetworkTypeKr(ILandroid/os/Message;)V
+      [已补] setScmMode(IIILandroid/os/Message;)V
+      [已补] setTuneaway(ZLandroid/os/Message;)V
+      [已补] setUacCheck(IILandroid/os/Message;)V
+      [已补] setVoiceDomainPref(ILandroid/os/Message;)V
+      [已补] setVoiceDomainStatus(ZZLandroid/os/Message;)V
+      [已补] unSetOnSIB16Time(Landroid/os/Handler;)V
+      [已补] unSetOnSmsOverImsUrc(Landroid/os/Handler;)V
+      [已补] unregisterCallReady(Landroid/os/Handler;)V
+      [已补] unregisterForCampedMccMncChanged(Landroid/os/Handler;)V
+      [已补] unregisterForLteEmmReject(Landroid/os/Handler;)V
+      [已补] unregisterForLteNetworkInfo(Landroid/os/Handler;)V
+      [已补] unregisterForWcdmaAcceptReceived(Landroid/os/Handler;)V
+      [已补] unregisterForWcdmaNetChanged(Landroid/os/Handler;)V
+      [已补] unregisterForWcdmaNetToKoreaChanged(Landroid/os/Handler;)V
+      [已补] unregisterForWcdmaRejectReceived(Landroid/os/Handler;)V
+      [已补] unregisterHandoffInformation(Landroid/os/Handler;)V
+      [已补] unregisterImsPreference(Landroid/os/Handler;)V
+      [已补] unregisterLteState(Landroid/os/Handler;)V
+      [已补] unregisterNrRegistrationInfo(Landroid/os/Handler;)V
+      [已补] unregisterSsacState(Landroid/os/Handler;)V
+      [已补] unregisterUacBarredAlleviation(Landroid/os/Handler;)V
+      [已补] unregisterUacResponse(Landroid/os/Handler;)V
+  com/android/internal/telephony/Connection  (2 个)
+      [已补] getDialExtras()Landroid/os/Bundle;
+      [已补] isLgeEmergencyNumber()Z
+  com/android/internal/telephony/GsmCdmaPhone  (10 个)
+      [已补] ImsRegisteredOfOtherSlot()Z
+      [已补] getAlertId()I
+      [已补] getDataConnectionState()Lcom/android/internal/telephony/PhoneConstants$DataState;
+      [已补] getLastSubId()I
+      [已补] getLgImsRegState()I
+      [已补] getModemIntegerItem(ILandroid/os/Message;)V
+      [已补] getModemStringItem(ILandroid/os/Message;)V
+      [已补] lgeNotifyServiceStateChanged()V
+      [已补] setModemIntegerItem(IILandroid/os/Message;)V
+      [已补] stopPowerOffDelayToOtherslot()V
+  com/android/internal/telephony/Phone  (16 个)
+      [已补] exitVolteE911EmergencyMode()V
+      [已补] getActiveApnHost(Ljava/lang/String;)Ljava/lang/String;
+      [已补] getDataEnabledSettings()Lcom/android/internal/telephony/dataconnection/DataEnabledSettings;
+      [已补] getIMSNetworkInfo()[Ljava/lang/String;
+      [已补] getLastSubId()I
+      [已补] getModemIntegerItem(ILandroid/os/Message;)V
+      [已补] getModemStringItem(ILandroid/os/Message;)V
+      [已补] getPcscfAddress(Ljava/lang/String;)[Ljava/lang/String;
+      [已补] getTransportManager()Lcom/android/internal/telephony/dataconnection/TransportManager;
+      [已补] getVolteE911NetworkType()V
+      [已补] isSystemInPrl()Z
+      [已补] isUiccInserted()Z
+      [已补] isUnsolResponseEnabled()Z
+      [已补] queryInfoForIms()V
+      [已补] setModemIntegerItem(IILandroid/os/Message;)V
+      [已补] setModemStringItem(ILjava/lang/String;Landroid/os/Message;)V
+  com/android/internal/telephony/RIL  (6 个)
+      [已补] arrayListToPrimitiveArray(Ljava/util/ArrayList;)[B
+      [已补] iccCloseLogicalChannel(ILandroid/os/Message;)V
+      [已补] iccTransmitApduLogicalChannel(IIIIIILjava/lang/String;Landroid/os/Message;)V
+      [已补] requestToString(I)Ljava/lang/String;
+      [已补] responseToString(I)Ljava/lang/String;
+      [已补] setOnSIB16Time(Landroid/os/Handler;ILjava/lang/Object;)V
+  com/android/internal/telephony/SMSDispatcher  (3 个)
+      [已补] access$000(Lcom/android/internal/telephony/SMSDispatcher;Ljava/lang/String;)V
+      [已补] access$200()Ljava/util/UUID;
+      [已补] access$400(Lcom/android/internal/telephony/SMSDispatcher;[Lcom/android/internal/telephony/SMSDispatcher$SmsTracker;I[I)V
+  com/android/internal/telephony/SMSDispatcher$MultipartSmsSender  (1 个)
+      [已补] sendSmsByCarrierApp(Ljava/lang/String;Lcom/android/internal/telephony/SMSDispatcher$MultipartSmsSenderCallback;)V
+  com/android/internal/telephony/SMSDispatcher$SmsTracker  (2 个)
+      [已补] setDoNotWrite(Z)V
+      [已补] setIccImsi(Ljava/lang/String;)V
+  com/android/internal/telephony/ServiceStateTracker  (3 个)
+      [已补] addImsNetworkInfoListener(Lcom/android/internal/telephony/ILGImsNetworkInfoListener;)V
+      [已补] clearLastCellInfoRequestTime()V
+      [已补] removeImsNetworkInfoListener(Lcom/android/internal/telephony/ILGImsNetworkInfoListener;)V
+  com/android/internal/telephony/SmsDispatchersController  (1 个)
+      [已补] getEmergencySmsPossible()Z
+  com/android/internal/telephony/SmsUsageMonitor  (2 个)
+      [已补] authorizeOutgoingSms(Landroid/content/pm/PackageInfo;Ljava/lang/String;Ljava/lang/String;Lcom/android/internal/telephony/SmsUsageMonitor$SmsAuthorizationCallback;Landroid/os/Handler;)V
+      [已补] isSmsAuthorizationEnabled()Z
+  com/android/internal/telephony/SubscriptionController  (8 个)
+      [已补] getActiveSubInfoCount(Ljava/lang/String;)I
+      [已补] getActiveSubscriptionInfo(ILjava/lang/String;Ljava/lang/String;)Landroid/telephony/SubscriptionInfo;
+      [已补] getDataEnabledOverrideRules(I)Ljava/lang/String;
+      [已补] getDefaultDataSubId()I
+      [已补] getDefaultSubId()I
+      [已补] getPhoneId(I)I
+      [已补] setDataEnabledOverrideRules(ILjava/lang/String;)Z
+      [已补] setPlmnSpn(IZLjava/lang/String;ZLjava/lang/String;)Z
+  com/android/internal/telephony/metrics/SmsStats  (2 个)
+      [已补] onOutgoingSms(ZZZIIJZ)V
+      [已补] onOutgoingSms(ZZZIJZ)V
+  com/android/internal/telephony/uicc/IsimUiccRecords  (1 个)
+      [已补] getLGWFCInfo()Lcom/lge/uicc/framework/LGWFCInfo;
+  com/android/internal/telephony/uicc/UiccCard  (2 个)
+      [已补] getApplication(I)Lcom/android/internal/telephony/uicc/UiccCardApplication;
+      [已补] getOperatorBrandOverride()Ljava/lang/String;
+
+=== ★ 注意：125 个桩里有 33 个返回非 void，空实现返回 0/null ===
+    其中 8 个的调用方在 IMS 代理链上，返回值可能影响注册逻辑：
+      Phone.getPcscfAddress(String)[]String        <- LGImsPhoneProxy$PhoneProxyBinder  (P-CSCF!)
+      Phone.getActiveApnHost(String)String         <- LGImsPhoneProxy$PhoneProxyBinder
+      Phone.getIMSNetworkInfo()[]String            <- LGImsPhoneProxy$PhoneProxyHandler
+      Phone.isUnsolResponseEnabled()Z              <- LGImsPhoneProxy$PhoneProxyBinder
+      Phone.getDataEnabledSettings()DataEnabledSettings <- LGImsPhoneProxy
+      SubscriptionController.getDefaultSubId()I    <- LGImsIsimHandler
+      SubscriptionController.getPhoneId(I)I        <- LGImsIsimHandler
+      IsimUiccRecords.getLGWFCInfo()LGWFCInfo      <- LGImsIsimHandler$LGImsIsim
+    为什么不改成真实现：PE 上没有对应的 AOSP 等价物（A14 删掉了 TelephonyManager.getPcscfAddress 等），
+    硬写需要 ConnectivityManager/LinkProperties 那一套，风险更大。
+    不打桩的后果更差：NoSuchMethodError 会让 LGImsPhoneProxy.start() 直接失败，proxy 根本起不来。
+    注：P-CSCF 另有一条路（ApnImsGlobal 走 DCApn.getPcscfAddress -> LGExtApi$Data.getPcscfAddress），
+    那条早先已经在 Ims6.apk 里改好了，没被破坏。
+
+=== 未补（目标类在 telephony-common 之外，本版不碰 framework.jar；共 34 个方法 / 17 个类）===
+
+  android/app/NotificationChannel  (2 个)   ★ 不在 telephony-common
+      setHideBadge(Z)V
+            调用方: com/lge/uicc/framework/IccFaultDetector, com/lge/uicc/framework/IccNotiController, com/lge/uicc/framework/IccNotiControllerVZW
+      setHideChannel(Z)V
+            调用方: com/android/internal/telephony/kr/KrNotificationChannelController, com/lge/uicc/framework/IccFaultDetector, com/lge/uicc/framework/IccNotiController …
+  android/hardware/display/DisplayManagerGlobal  (1 个)   ★ 不在 telephony-common
+      isNotchDisplayDevice()Z
+            调用方: com/lge/uicc/framework/IccNotiController, com/lge/uicc/framework/IccSwapDialog, com/lge/uicc/framework/IccSwapDialog$4
+  android/os/INetworkManagementService  (2 个)   ★ 不在 telephony-common
+      setMdmIptables(Ljava/lang/String;)V
+            调用方: com/lge/systemservice/core/LGNetworkManager
+      setMdmIptablesFile(Ljava/lang/String;)V
+            调用方: com/lge/systemservice/core/LGNetworkManager
+  android/os/IVibratorManagerService  (2 个)   ★ 不在 telephony-common
+      setVibrateMute(ZLjava/lang/String;Landroid/os/IBinder;)V
+            调用方: com/lge/systemservice/core/VolumeVibratorManager
+      vibrate(ILjava/lang/String;Landroid/os/CombinedVibration;Landroid/os/VibrationAttributes;Ljava/lang/String;Landroid/os/IBinder;)V
+            调用方: com/lge/systemservice/core/VolumeVibratorManager
+  android/os/VibrationAttributes$Builder  (1 个)   ★ 不在 telephony-common
+      <init>(Landroid/media/AudioAttributes;Landroid/os/VibrationEffect;)V
+            调用方: com/lge/systemservice/core/VolumeVibratorManager
+  android/telephony/NetworkRegistrationInfo  (1 个)   ★ 不在 telephony-common
+      getExtraInfos()[I
+            调用方: com/android/internal/telephony/ServiceStateTrackerEx
+  android/telephony/ServiceState  (2 个)   ★ 不在 telephony-common
+      getLGServiceStateImpl()Lcom/lge/telephony/LGServiceStateImpl;
+            调用方: com/lge/telephony/LGServiceState
+      isPsTech(I)Z
+            调用方: com/android/internal/telephony/ServiceStateTrackerEx
+  android/telephony/SignalStrength  (5 个)   ★ 不在 telephony-common
+      <init>(Lvendor/lge/hardware/radio/V1_0/LgeSignalStrength;I)V
+            调用方: com/android/internal/telephony/LgeRadioIndication, com/android/internal/telephony/LgeRadioResponse
+      <init>(Lvendor/lge/hardware/radio/V1_3/LgeSignalStrength;I)V
+            调用方: com/android/internal/telephony/LgeRadioIndication, com/android/internal/telephony/LgeRadioResponse
+      <init>(Lvendor/lge/hardware/radio/V2_0/LgeSignalStrength;I)V
+            调用方: com/android/internal/telephony/LgeRadioIndicationV2, com/android/internal/telephony/LgeRadioResponseV2
+      getLGSignalStrength()Lcom/lge/telephony/LGSignalStrength;
+            调用方: com/lge/telephony/LGSignalStrength
+      setLteRssnr(I)V
+            调用方: com/android/internal/telephony/ServiceStateTrackerEx
+  android/telephony/SmsManager  (1 个)   ★ 不在 telephony-common
+      getServiceCenterAddress()Ljava/lang/String;
+            调用方: com/android/internal/telephony/soi/SoiManagerMTK$1
+  android/telephony/SmsMessage  (2 个)   ★ 不在 telephony-common
+      setPriority(I)V
+            调用方: com/android/internal/telephony/SMSDispatcherEx
+      setValidityPeriod(I)V
+            调用方: com/android/internal/telephony/SMSDispatcherEx
+  android/telephony/data/DataProfile$Builder  (3 个)   ★ 不在 telephony-common
+      setMaxConnections(I)Landroid/telephony/data/DataProfile$Builder;
+            调用方: com/android/internal/telephony/LgeRadioResponseV2
+      setMaxConnectionsTime(I)Landroid/telephony/data/DataProfile$Builder;
+            调用方: com/android/internal/telephony/LgeRadioResponseV2
+      setWaitTime(I)Landroid/telephony/data/DataProfile$Builder;
+            调用方: com/android/internal/telephony/LgeRadioResponseV2
+  android/telephony/ims/ImsVideoCallProvider  (1 个)   ★ 不在 telephony-common
+      dispose()V
+            调用方: com/android/ims/internal/LGImsVideoCallProvider
+  com/android/internal/net/NetworkUtilsInternal  (1 个)   ★ 不在 telephony-common
+      multiplySafeByRational(JJJ)J
+            调用方: android/net/NetworkStatsHistory
+  com/android/internal/policy/IKeyguardStateCallback  (2 个)   ★ 不在 telephony-common
+      onHasLockscreenWallpaperChanged(Z)V
+            调用方: com/lge/systemservice/core/KeyguardStateMonitorGlobal
+      onShowingStateChanged(Z)V
+            调用方: com/lge/systemservice/core/KeyguardStateMonitorGlobal
+  com/android/internal/telephony/GsmAlphabet  (6 个)   ★ 不在 telephony-common
+      getCharsToGsmTables()[Landroid/util/SparseIntArray;
+            调用方: com/lge/internal/telephony/LGGsmAlphabet
+      getCharsToShiftTables()[Landroid/util/SparseIntArray;
+            调用方: com/lge/internal/telephony/LGGsmAlphabet
+      getDisableCountryEncodingCheck()Z
+            调用方: com/lge/internal/telephony/LGGsmAlphabet
+      getHighestEnabledSingleShiftCode()I
+            调用方: com/lge/internal/telephony/LGGsmAlphabet
+      getLanguageShiftTables()[Ljava/lang/String;
+            调用方: com/lge/internal/telephony/LGGsmAlphabet
+      getLanguageTables()[Ljava/lang/String;
+            调用方: com/lge/internal/telephony/LGGsmAlphabet
+  com/android/internal/telephony/OperatorInfo  (1 个)   ★ 不在 telephony-common
+      <init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+            调用方: com/android/internal/telephony/LgeRadioResponse, com/android/internal/telephony/LgeRadioResponseV2
+  com/android/internal/telephony/cdma/sms/BearerData$TimeStamp  (1 个)   ★ 不在 telephony-common
+      encodefromByteArray([B)Lcom/android/internal/telephony/cdma/sms/BearerData$TimeStamp;
+            调用方: com/android/internal/telephony/cdma/LGCdmaSmsMessage

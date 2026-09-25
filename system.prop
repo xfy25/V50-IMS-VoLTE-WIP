@@ -1,0 +1,4 @@
+persist.product.lge.ims.volte_open=1
+ro.vendor.lge.build.target_operator=OPEN
+ro.vendor.lge.build.target_country=CN
+ro.vendor.lge.build.target_region=CN

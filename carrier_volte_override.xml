@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- v0.39: AOSP 的 ImsManager.isVolteEnabledByPlatform() 读 CarrierConfig 的
+     carrier_volte_available_bool。本机实测 isVolteEnabled=false，导致拨号不走 IMS、
+     挂断卡住。此处把它置 true。格式与用法照抄参考 repo 的 carrier_wlan_override.xml。 -->
+<carrier_config>
+    <boolean name="carrier_volte_available_bool" value="true"/>
+    <boolean name="carrier_vt_available_bool" value="true"/>
+    <boolean name="carrier_wfc_ims_available_bool" value="true"/>
+    <boolean name="carrier_supports_sms_over_ims_bool" value="false"/>
+    <boolean name="carrier_use_ims_first_for_sms_bool" value="false"/>
+</carrier_config>

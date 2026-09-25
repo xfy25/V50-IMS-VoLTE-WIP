@@ -1,0 +1,12 @@
+# LG IMS - IPSec {
+# v0.35：从 V50 stock system_ext/etc/init/init.lge.ims.rc 原样移植。
+# 路径由 /system_ext/bin/... 改为 /system/system_ext/bin/...（本机 system_ext 挂在 system 下）。
+service product.imsipsecclient /system/system_ext/bin/imsipsecclient
+    class main
+    group system net_admin net_raw
+    disabled
+service product.imsipsecstarter /system/system_ext/bin/imsipsecstarter
+    class main
+    user system
+    group system net_admin net_raw
+# LG IMS - IPSec }
