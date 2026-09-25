@@ -21,7 +21,7 @@ Root      APatch  ← 必需，见下方"要求"
 | **VoLTE 语音** | ✅ 可用 | IMS 注册成功，走 `com.lge.ims` |
 | 视频通话 (VT) | ✅ 判定已放开 | `persist.dbg.vt_avail_ovr=1` |
 | IPSec（IMS 安全通道） | ✅ 已打通 | 三方 socket 路径已统一改写 |
-| **短信** | ⚠️ 走 CS/CSFB | v0.60 强制回落到 CS。**不走 IMS** |
+| **短信** | ⚠️ 走 CS/CSFB | v0.60 强制回落到 CS。**不走 IMS** |目前仍不可用
 | VoWiFi | ❌ 不支持 | 未做 |
 | 5G NR 上的语音 (VoNR) | ❌ 未验证 | |
 
@@ -37,7 +37,7 @@ This module brings the LG V50's proprietary IMS/VoLTE stack to AOSP-based Androi
 
 **Requirements:** LG V50 (`flashlmdd`) only — enforced at install time; **APatch** (not Magisk); Pixel Experience 14 / API 34.
 
-**Status:** VoLTE voice works. SMS stays on CS/CSFB. No VoWiFi.
+**Status:** VoLTE voice works. SMS not working. No VoWiFi.
 
 **Safety net:** if two consecutive boots fail to reach `sys.boot_completed`, the module automatically moves the patched jar aside so the stock one comes back.
 
