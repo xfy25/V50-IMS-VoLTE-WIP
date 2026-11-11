@@ -1,0 +1,40 @@
+# v50_soi_hal v0.3 live policy (23 rules, one per line)
+# The registrar runs in the APatch/magisk domain; everything else is the stock
+# LG policy that already ships in the vendor image. APatch's magiskpolicy does
+# not honour "self" - both sides are always spelled out.
+#
+# v0.3 removed 5 rules that referenced types absent from the live policy on
+# PE14 (hal_lge_soi_hwservice x3, vendor_lge_ril_prop, vendor_lge_sms_framework_prop).
+# magiskpolicy silently drops such rules (rc=0 but no rule is added), so they
+# were pure noise. Re-add only if a future ROM actually defines those types.
+
+# registrar -> hwservicemanager / hwbinder
+allow magisk hwservicemanager binder { call transfer }
+allow magisk default_android_hwservice hwservice_manager { add find }
+allow magisk hidl_base_hwservice hwservice_manager { add find }
+allow magisk magisk binder { call transfer }
+
+# registrar libs / config / QMI
+allow magisk vendor_file file { read open getattr map execute execute_no_trans }
+allow magisk vendor_hal_file file { read open getattr map execute execute_no_trans }
+allow magisk vendor_configs_file file { read open getattr map }
+allow magisk magisk qipcrtr_socket { ioctl read write create getattr setattr lock append map bind connect getopt setopt shutdown }
+allow magisk magisk socket { ioctl read write create getattr setattr lock append map bind connect getopt setopt shutdown }
+allow magisk magisk unix_dgram_socket { create bind connect write read getattr setopt }
+allow magisk property_socket sock_file { write }
+allow magisk null_device chr_file { read write open getattr ioctl }
+allow magisk tmpfs file { read write create open append getattr }
+allow magisk proc file { read open getattr }
+allow magisk sysfs file { read open getattr }
+
+# client side: com.lge.ims currently runs as radio on PE14 (seapp override
+# exists but is not applied); keep vendor_qtelephony rules for other ROMs.
+allow radio magisk binder { call transfer }
+allow magisk radio binder transfer
+allow radio magisk fd { use }
+allow radio default_android_hwservice hwservice_manager { find }
+
+allow vendor_qtelephony magisk binder { call transfer }
+allow magisk vendor_qtelephony binder transfer
+allow vendor_qtelephony magisk fd { use }
+allow vendor_qtelephony default_android_hwservice hwservice_manager { find }

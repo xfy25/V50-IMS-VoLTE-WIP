@@ -19,9 +19,10 @@ Root      APatch  ← 必需，见下方"要求"
 | 功能 | 状态 | 说明 |
 |---|---|---|
 | **VoLTE 语音** | ✅ 可用 | IMS 注册成功，走 `com.lge.ims` |
+| **短信（SMS over IMS）** | ✅ 可用 | 需同时安装 `v50_soi_hal` v0.3；实测收发正常 |
+| **来电号码显示** | ✅ 已修复 | 接听后不再降级为“未知”，CallLog 落号正常 |
 | 视频通话 (VT) | ✅ 判定已放开 | `persist.dbg.vt_avail_ovr=1` |
 | IPSec（IMS 安全通道） | ✅ 已打通 | 三方 socket 路径已统一改写 |
-| **短信** | ❌不可用| v0.61 尝试强制回落 CS，目前仍未生效|
 | VoWiFi | ❌ 不支持 | 未做 |
 | 5G NR 上的语音 (VoNR) | ❌ 未验证 | |
 
@@ -37,7 +38,7 @@ This module brings the LG V50's proprietary IMS/VoLTE stack to AOSP-based Androi
 
 **Requirements:** LG V50 (`flashlmdd`) only — enforced at install time; **APatch** (not Magisk); Pixel Experience 14 / API 34.
 
-**Status:** VoLTE voice works. SMS not working. No VoWiFi.
+**Status:** VoLTE voice and SMS over IMS work (SMS requires the separate `v50_soi_hal` module). No VoWiFi.
 
 **Safety net:** if two consecutive boots fail to reach `sys.boot_completed`, the module automatically moves the patched jar aside so the stock one comes back.
 
@@ -54,10 +55,13 @@ This module brings the LG V50's proprietary IMS/VoLTE stack to AOSP-based Androi
 
 ## 安装
 
-1. 从 Releases 下载 `v50_ims_volte_v0.61.zip`
-2. APatch App → 模块 → 从本地安装
+1. 从 Releases 下载**两个** zip：`v50_ims_volte_v0.62.zip` 和 `v50_soi_hal_v0.3.zip`
+2. APatch App → 模块 → 从本地安装（两个都装，顺序不限）
 3. 重启
 4. 重启后**等 2～3 分钟**再判断效果（IMS 注册是异步的）
+
+> `v50_ims_volte` 是 LG IMS/VoLTE 主栈；`v50_soi_hal` 提供 SMS over IMS 所需的
+> `vendor.lge.hardware.soi@1.0::ISoi` HAL。只装前者语音正常，但短信不可用。
 
 装完可以看一眼日志确认：
 
@@ -78,7 +82,7 @@ su -c "cat /data/local/tmp/v50ims.log"
 
 ## 卸载
 
-直接在 APatch 里卸载并重启即可。`uninstall.sh` 会自动清掉模块写在模块外的残留（两份 `configuration.OPEN.CN.xml`、`/data/local/tmp/v50ims*`、`ipsec_*` socket、两个常驻进程）。
+把两个模块都卸载后重启。各自的 `uninstall.sh` 会清掉模块写在模块外的残留（两份 `configuration.OPEN.CN.xml`、`/data/local/tmp/v50ims*`、`ipsec_*` socket、SOI registrar 与两个常驻进程）。
 
 SELinux 规则和 `system/` 覆盖都是 per-boot 的，重启即消失。
 
@@ -144,7 +148,7 @@ avc: denied { add } for name=com.lge.ims.phone
      scontext=u:r:radio:s0  tcontext=u:object_r:default_android_service:s0
 ```
 
-模块在 `post-fs-data` 阶段用 `magiskpolicy` 注入 **62 条** `allow` 规则（按域：radio 18 / magisk 15 / platform_app 13 / vendor_dataservice_app 10 / hal_lgdata_default 3 / system_server 2 / hal_vss_ims_default 1），覆盖属性读取、binder 调用、hwservice 查找、service_manager 注册、socket 创建等。
+模块在 `post-fs-data` 阶段用 `magiskpolicy` 注入 **50 余条** `allow` 规则（按域：radio / magisk / platform_app / vendor_dataservice_app / hal_lgdata_default / system_server / hal_vss_ims_default），覆盖属性读取、binder 调用、hwservice 查找、service_manager 注册、socket 创建等。v0.62 起改为一次 `magiskpolicy --live --apply`（实测 64 条逐条约 1.7 秒 → 一次约 0.11 秒），并删掉了 live policy 里不存在的类型所对应的空转规则。
 
 这些规则是 per-boot 的，不落盘，重启即恢复。
 
@@ -220,12 +224,13 @@ su -c "cat /data/local/tmp/v50ims_boot.txt"  # 每次开机的台账
 
 ## 已知限制
 
-1. **短信不走 IMS**。v0.60 是主动把短信强制回落到 CS/CSFB 的（`sms_over_ip_networks_indication=''→0`），这是当前版本的既定行为，不是 bug。
-2. **VoWiFi 未实现**。
-3. **33 个非 void 桩返回 0/null**，其中 8 个在 IMS 代理链上（见上文第 2 节），属于已知的理论风险点。
-4. **只支持 APatch**。Magisk 下能装但预期不可用。
-5. **只验证了 Pixel Experience 14**。
-6. `LATENT_DRIFT.txt` 是**中文**技术附录。
+1. **VoWiFi 未实现**。
+2. **33 个非 void 桩返回 0/null**，其中 8 个在 IMS 代理链上（见上文第 2 节），属于已知的理论风险点。
+3. **只支持 APatch**。Magisk 下能装但预期不可用。
+4. **只验证了 Pixel Experience 14**。
+5. **短信依赖第二个模块**（`v50_soi_hal`）。只装 IMS 模块时语音正常、短信不可用。
+6. **开机竞态**：极少数开机 `system_server` 会在权限服务初始化时自恢复重启一次（AOSP 启动竞态，不是模块崩溃）。v0.62 已把早期 SELinux 规则改为一次 `--apply`，并让 SOI registrar 提前到 late_start，显著减少窗口内的活动；仍在多开机观察。
+7. `LATENT_DRIFT.txt` 是**中文**技术附录。
 
 ---
 
@@ -243,6 +248,12 @@ su -c "cat /data/local/tmp/v50ims_boot.txt"  # 每次开机的台账
 ├── LATENT_DRIFT.txt               ★ 159 个缺失方法 / 33 个类的完整清单
 ├── v50ims/
 │   └── configuration.OPEN.CN.xml  LG IMS 配置（注入到两个运行期位置）
+├── soi_hal/                       ★ 第二个模块：SOI HAL（SMS over IMS）
+│   ├── module.prop
+│   ├── post-fs-data.sh            /vendor 三处 overlayfs（保留原文件）
+│   ├── service.sh                 registrar + watchdog（v0.3）
+│   ├── soipolicy.txt              23 条 SELinux 规则
+│   └── files/                     HAL 服务、HAL 库、QMI helper
 └── system/                        覆盖到 /system 的 payload
     ├── etc/                       ike_conf / mapcon_conf
     ├── framework/

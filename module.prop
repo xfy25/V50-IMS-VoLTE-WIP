@@ -1,6 +1,6 @@
 id=v50_ims_volte
 name=V50 IMS + VoLTE
-version=0.61
-versionCode=62
+version=0.62
+versionCode=63
 author=v50
-description=LG V50 (flashlmdd) IMS/VoLTE for Pixel Experience 14. 把 LG 原厂的 com.lge.ims 栈搬进 AOSP 系 ROM：Ims6.apk + libims.lge.so + lgdataservice + 打了 125 个兼容桩的 telephony-common.jar，配套 SELinux 规则与 IPSec 通道。v0.61：新增安装期设备校验与卸载清理，修复 zip 未存权限位导致 imsipsec* 不可执行。语音走 IMS/VoLTE；短信仍走 CS/CSFB，暂不支持 VoWiFi。
+description=LG V50 (flashlmdd) IMS/VoLTE for Pixel Experience 14. 把 LG 原厂的 com.lge.ims 栈搬进 AOSP 系 ROM：Ims6.apk + libims.lge.so + lgdataservice + 打了 125 个兼容桩的 telephony-common.jar，配套 SELinux 规则与 IPSec 通道。v0.62：修复接听后号码被降级为“未知”；打开 SMS over IMS（需配套 v50_soi_hal v0.3）；SELinux 规则改为一次 --apply。语音/短信均走 IMS，暂不支持 VoWiFi。

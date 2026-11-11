@@ -315,11 +315,13 @@ RP2=/data/adb/ap/bin/resetprop
 # ---------------------------------------------------------------- SELinux 规则
 if [ -x "$MP" ]; then
   echo "-- SELinux 规则 --" >> $LOG
+  # v0.62: 一次 --apply（实测 64 条逐条 1695 ms -> 一次 113 ms）。
+  # 同时删掉 live policy 里不存在的类型的规则：APatch magiskpolicy 对未知类型
+  # 静默丢弃（rc=0 但规则不生效），留着只会制造假阳性。
+  POL=$TMP/v50ims_policy.txt
+  : > "$POL"
   for r in \
     "allow radio vendor_lge_misc_prop file { read open getattr map }" \
-    "allow radio lge_ims_data_prop file { read open getattr map }" \
-    "allow radio lge_ims_wo_prop file { read open getattr map }" \
-    "allow radio lge_ims_reg_prop file { read open getattr map }" \
     "allow radio system_data_file dir { getattr search }" \
     "allow radio default_prop property_service { set }" \
     "allow radio system_prop property_service { set }" \
@@ -331,8 +333,6 @@ if [ -x "$MP" ]; then
     "allow hal_vss_ims_default radio binder { call transfer }" \
     "allow radio hal_vss_ims_default fd { use }" \
     "allow vendor_dataservice_app vendor_lge_misc_prop file { read open getattr map }" \
-    "allow vendor_dataservice_app lge_ims_data_prop file { read open getattr map }" \
-    "allow vendor_dataservice_app lge_ims_wo_prop file { read open getattr map }" \
     "allow vendor_dataservice_app default_prop property_service { set }" \
     "allow vendor_dataservice_app system_prop property_service { set }" \
     "allow vendor_dataservice_app app_data_file dir { getattr search read open write add_name remove_name create }" \
@@ -368,21 +368,31 @@ if [ -x "$MP" ]; then
     "allow radio default_android_service service_manager { add }" \
     "allow magisk service_manager_type service_manager { find }" \
     "allow magisk service_manager_type service_manager { list }" \
-    "allow magisk system_ext_file file { read open getattr map execute execute_no_trans }" \
     "allow magisk system_file file { read open getattr map execute execute_no_trans }" \
-    "allow magisk self unix_dgram_socket { create bind connect write read getattr setopt }" \
-    "allow magisk self netlink_xfrm_socket { create bind write read getattr setopt }" \
-    "allow magisk self netlink_route_socket { create bind write read getattr setopt }" \
-    "allow magisk self netlink_socket { create bind write read getattr setopt }" \
-    "allow magisk self capability { net_admin net_raw }" \
     "allow magisk tmpfs file { read write open create getattr unlink }" \
     "allow magisk tmpfs dir { read write open getattr add_name remove_name search }" \
     "allow magisk shell_data_file dir { read write open getattr add_name remove_name search }" \
     "allow magisk shell_data_file file { read write open create getattr unlink }" \
     ; do
-    out=$($MP --live "$r" 2>&1)
-    echo "  [$?] $r ${out}" >> $LOG
+    echo "$r" >> "$POL"
   done
+  T0=$(date +%s%N)
+  "$MP" --live --apply "$POL"
+  RC=$?
+  T1=$(date +%s%N)
+  if [ "$RC" -eq 0 ]; then
+    echo "  policy: one-shot rc=0 elapsed_ms=$(( (T1 - T0) / 1000000 )) lines=$(wc -l < "$POL")" >> $LOG
+  else
+    echo "  policy: one-shot rc=$RC, falling back to per-line" >> $LOG
+    OK=0; BAD=0
+    while IFS= read -r r; do
+      [ -z "$r" ] && continue
+      out=$($MP --live "$r" 2>&1); rc=$?
+      if [ "$rc" -eq 0 ]; then OK=$((OK + 1)); else BAD=$((BAD + 1)); fi
+      echo "  [$rc] $r ${out}" >> $LOG
+    done < "$POL"
+    echo "  policy: per-line ok=$OK rejected=$BAD" >> $LOG
+  fi
 else
   echo "  magiskpolicy 不存在" >> $LOG
 fi
@@ -447,7 +457,7 @@ echo $! > "$PIDF" 2>/dev/null
 # 通话有声音。stock 上这个 HAL 正常工作，说明 stock 策略本就有这条，属移植遗漏。
 # ★ 目标域必须写全，不能用 self —— APatch 的 magiskpolicy 不认 self 简写，
 #   会返回 rc=0 但策略不变（实测踩过）。
-"$MP" --live "allow hal_vss_ims_default hal_vss_ims_default qipcrtr_socket { read write create getattr bind connect setopt recvfrom sendto }"
+[ -x "$MP" ] && "$MP" --live "allow hal_vss_ims_default hal_vss_ims_default qipcrtr_socket { read write create getattr bind connect setopt recvfrom sendto }"
 
 
 # ---------------------------------------------------------------- v0.57 运营商配置修复

@@ -26,7 +26,9 @@ Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 
 if ([string]::IsNullOrEmpty($OutDir)) { $OutDir = Join-Path $Root 'dist' }
-$Root = (Resolve-Path $Root).Path
+# ProviderPath, not Path: on a UNC root (\\wsl$\...) PS 5.1's .Path returns
+# "Microsoft.PowerShell.Core\FileSystem::\\..." while FullName stays plain UNC.
+$Root = (Resolve-Path $Root).ProviderPath
 
 # ---------------------------------------------------------------------------
 # What goes INSIDE the module zip.
@@ -63,6 +65,9 @@ foreach ($d in @('v50ims','system')) {
     $dp = Join-Path $Root $d
     if (-not (Test-Path $dp)) { throw "MISSING required dir: $d" }
     Get-ChildItem $dp -Recurse -File | ForEach-Object {
+        # Never ship runtime backups / state (v0.62: v50ims/ had a .bak-2026...).
+        if ($_.Name -match '\.(bak|orig|disabled|tmp|swp)$|\.bak-') { return }
+        if ($_.Name -match '^\.boot') { return }
         $payload.Add($_.FullName.Substring($Root.Length + 1).Replace('\','/'))
     }
 }
@@ -79,6 +84,29 @@ $prop    = Get-Content (Join-Path $Root 'module.prop') -Raw
 $version = ([regex]::Match($prop,'(?m)^version=(.+)$')).Groups[1].Value.Trim()
 $code    = ([regex]::Match($prop,'(?m)^versionCode=(.+)$')).Groups[1].Value.Trim()
 if (-not $version) { throw "cannot read version= from module.prop" }
+
+# ---------------------------------------------------------------------------
+# Release guards (both bugs actually shipped before)
+# ---------------------------------------------------------------------------
+# 1) Never ship the unpatched PE14 telephony-common.jar.
+$jar = Join-Path $Root 'system/framework/telephony-common.jar'
+$jarHash = (Get-FileHash $jar -Algorithm MD5).Hash
+if ($jarHash -eq '005DADC738F66F186D7120757126E079') {
+    throw "JAR GUARD FAILED: system/framework/telephony-common.jar is the unpatched stock jar"
+}
+# 2) Never ship the SMS-over-IP-disabled config again (the v0.61 zip bug).
+$cfg = [IO.File]::ReadAllText((Join-Path $Root 'v50ims/configuration.OPEN.CN.xml'))
+foreach ($pair in @(
+    @('sdm_sms_over_ip_network','TEXT','true'),
+    @('sms_over_ip_networks_indication','TEXT','1'),
+    @('LGE_FEATURE_SMS','INTEGER','1'),
+    @('config_xml_modified_time','TEXT','105')
+)) {
+    $pat = 'name="{0}" type="{1}" value="{2}"' -f $pair[0], $pair[1], $pair[2]
+    if ($cfg -notmatch [regex]::Escape($pat)) {
+        throw "CONFIG GUARD FAILED: missing [$pat] in v50ims/configuration.OPEN.CN.xml"
+    }
+}
 
 if (-not (Test-Path $OutDir)) { New-Item -ItemType Directory -Path $OutDir | Out-Null }
 $zipPath = Join-Path $OutDir ("v50_ims_volte_v{0}.zip" -f $version)

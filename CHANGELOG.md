@@ -34,6 +34,24 @@
 | 0.59 | 59 | `nUETIMER_QOS_FORCE_FAKE` 0→1：1 秒未收到通知即强制就绪 |
 | **0.60** | **61** | 主动把短信强制回落 CS/CSFB（`voice_domain_preference_*`、`sms_over_ip_networks_indication=0`） |
 | **0.61** | **62** | **首个公开发布版**：安装期设备校验、卸载清理、修 zip 权限位缺失 |
+| **0.62** | **63** | **来电号码显示修复 + SMS over IMS；配套 v50_soi_hal v0.3；SELinux 一次 `--apply`** |
+
+## v0.62 —— 来电显示 / SMS over IMS
+
+- **来电号码显示**：`telephony-common.jar` 补丁 v2，`ImsPhoneConnection` 构造器与
+  `updateAddressDisplay()` 的判定由 `if-eqz` 改为 `if-nez`。接听后不再把已知号码
+  降级为 `UNKNOWN(3)`，CallLog 落 `number` + `presentation=1`。
+- **SMS over IMS**：`configuration.OPEN.CN.xml` 打开
+  `sdm_sms_over_ip_network=true`、`sms_over_ip_networks_indication=1`、
+  `LGE_FEATURE_SMS=1`，`config_xml_modified_time` 105 触发 `lgims.db` 重建。
+  需配套 **v50_soi_hal v0.3**（单独 zip）。实测收发正常。
+- **v50_soi_hal v0.3**：registrar 在 late_start 提前启动，IMS 第一次启动即拿到 ISoi；
+  正常开机不再 `am force-stop` / `am start-service`；28→23 条 SELinux 规则一次 `--apply`；
+  watchdog 在 registrar 死亡后先等 ISoi 注册成功再重启 IMS，避免打断 IPSec。
+- **性能**：IMS 模块 post-fs-data 的 64 条规则由逐条 1.7 s 改为一次 0.11 s；
+  SOI registrar 抢在 IMS 前约 13 s 启动。开机崩溃窗口内的模块活动只剩一次 policy + lshal 探测。
+- **构建防护**：`tools/build.ps1` 新增 jar 与配置断言，防止再把未打补丁的 jar 或
+  SMS-over-IP 关闭的旧配置打进 zip。
 
 ---
 

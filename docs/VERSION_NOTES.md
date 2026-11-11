@@ -223,3 +223,15 @@ v0.59：在 v0.58_precond 基础上把 nUETIMER_QOS_FORCE_FAKE 0→1，1 秒未�
 - 新增 `uninstall.sh`：清理模块写在模块外的残留（两份 configuration.OPEN.CN.xml、/data/local/tmp/v50ims*、ipsec_* socket、两个常驻进程）
 - 修复 zip 未存 unix 权限位的问题：v0.60 的包是 Windows 上打的，41 个条目外部属性高 16 位全为 0，导致 `imsipsecstarter` / `imsipsecclient` 可能以 0644 落地；而 service.sh 用 `[ -x ]` 判活，会静默不启动 IPSec 通道。现由 `customize.sh` 显式设为 0755
 - 补 README / CHANGELOG / NOTICE / LICENSE
+
+## v0.62  —  version `0.62` / versionCode `63`
+
+v0.62：来电显示修复 + SMS over IMS + 开机早期开销优化。三块互相独立：
+
+1. **来电显示**。旧结论「号码没到」是误判；三通来电日志里 ring 阶段 `notifyNewRingingConnection` 打印 `address: [****]`（user build 下 `Rlog.pii()` 对非空号码输出 `[****]`），Telecom 的 `ConnectionServiceWrapper: createConnection(handle=tel:...)` 与 SIP 的 `From: <tel:18620442985...>` 都说明号码一直都在。真正的缺陷是接听瞬间 `updateAddressDisplay()` 把 `mNumberPresentation` 从 `ALLOWED(1)` 降级成 `UNKNOWN(3)`：LG 只在 `createCallProfileFromIncomingCallInfo()` 里写 `oi/oir`，后续 `ImsCallSessionImpl$UCSessionListenerProxy` 的 update 走 `createCallProfileFromCallInfo()`，不带 `oi/cna/oir/cnap`，`getCallExtraInt("oir")` 缺省 -1 → `OIRToPresentation(-1)` = UNKNOWN。v1 补丁把判定写反了（`isEmpty()` 结果直接喂 `if-eqz`，变成“空才打补丁”），v2 只把构造器与 `updateAddressDisplay` 两处 `if-eqz` 改成 `if-nez`：`mAddress` 非空且 `oir` 缺省时强制 `ALLOWED(1)`。实测接听 `nump=1`、通话中保持、CallLog `number=186...` + `presentation=1`。
+
+2. **SMS over IMS**。此前短信一直关着：`configuration.OPEN.CN.xml` 里 `sdm_sms_over_ip_network=false`、`sms_over_ip_networks_indication=0`、`LGE_FEATURE_SMS=0`，SoI 从未被调用。本版改为 `true/1/1`，`config_xml_modified_time` 104→105 触发 `lgims.db` 重建。配套 `v50_soi_hal` 提供 `vendor.lge.hardware.soi@1.0::ISoi/default`；实测 `SIP/2.0 200 OK`、`SoIServiceState::IMSConnected()`→`STATE_READY`、`CreateSoIClient`、`FEATURE LIST ... SMS(16)`，短信收发正常。**注意**：`dist/v50_ims_volte_v0.61.zip` 内仍是旧配置，从旧 zip 重装会把 SMS 关回去；v0.62 的 `tools/build.ps1` 已加配置断言。
+
+3. **开机早期开销与 system_server 软重启**。对照矩阵定位到崩溃由 `v50_soi_hal/service.sh` 在 boot_completed 后的重活触发（28 条逐条 `magiskpolicy` + `am force-stop`/`am start-service`）；整体 `sleep 30` 虽能避开崩溃，但会打断 IMS 的 IPSec 初始化（测试 G）。v0.3 改为：registrar 在 late_start 启动（实测比 `com.lge.ims` 早 13 s），28→23 条规则一次 `--apply`，正常开机完全不调用 `am`；watchdog 保留，但 registrar 死亡后先轮询 lshal 等 ISoi 重新注册成功，再重启 IMS，注册失败则不动 IMS。实测 22:22 开机：registrar 22:22:23 起、22:22:28 注册好、IMS 22:22:41 才起，`ims pid at registrar-ready: ''`；policy `one-shot rc=0 elapsed=0s lines=28`；IPSec 三个 socket 齐全；dropbox `system_server_crash` 仍 7 条、无新增。**证据强度**：软重启只跑了 1 次开机，watchdog 兜底路径仍未实机验证。
+
+4. **策略清理**。用 `--print-rules` 实测（不是只看 rc）：`hal_lge_soi_hwservice`、`vendor_lge_ril_prop`、`vendor_lge_sms_framework_prop`、`lge_ims_*_prop`、`system_ext_file`、`self` 这些类型在 live policy 里都不存在，magiskpolicy 对未知类型是静默丢弃（rc=0 但没有规则落地）。本次删掉这些行；`self` 的 netlink/capability 权限本来就被 Magisk 基础策略覆盖。IMS 模块 64→53 条规则一次 `--apply`（实测 1695 ms → 113 ms）。

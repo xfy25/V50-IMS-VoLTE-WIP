@@ -12,7 +12,18 @@
 powershell -ExecutionPolicy Bypass -File tools\build.ps1
 ```
 
-产物落在 `dist\v50_ims_volte_v0.61.zip`，脚本会自己校验并打印 sha256。
+产物落在 `dist\v50_ims_volte_v0.62.zip`，脚本会自己校验并打印 sha256。
+
+SOI HAL 是独立模块，单独构建：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools\build_soi_hal.ps1
+```
+
+产物 `dist\v50_soi_hal_v0.3.zip`。
+
+`tools\build.ps1` 现在会做两条发版断言：jar 不能是未打补丁的原版（md5 `005dadc7...`），
+`configuration.OPEN.CN.xml` 必须包含 SMS-over-IP 的四项开值。任一条不满足直接中止。
 
 **不要用 `Compress-Archive`。** 它不写 unix 权限位，会复现下面这个 bug。
 
@@ -21,10 +32,16 @@ powershell -ExecutionPolicy Bypass -File tools\build.ps1
 ```bash
 chmod 0755 customize.sh post-fs-data.sh service.sh uninstall.sh
 chmod 0755 system/system_ext/bin/imsipsecstarter system/system_ext/bin/imsipsecclient
-zip -r -X v50_ims_volte_v0.61.zip \
+zip -r -X v50_ims_volte_v0.62.zip \
     module.prop customize.sh post-fs-data.sh service.sh uninstall.sh \
     system.prop carrier_volte_override.xml LATENT_DRIFT.txt \
     v50ims system
+
+# 第二个模块（SOI HAL）
+chmod 0755 soi_hal/*.sh soi_hal/files/bin/*
+(cd soi_hal && zip -r -X ../v50_soi_hal_v0.3.zip \
+    module.prop customize.sh post-fs-data.sh service.sh uninstall.sh \
+    soipolicy.txt NOTICE.md files)
 ```
 
 `zip` 会保留文件系统上的权限位。前提是文件本身已经是 0755 —— 从 `/mnt/` 或 U 盘复制过来的文件权限往往是错的，复制后记得重新 `chmod`。
@@ -81,19 +98,24 @@ git ls-files -s system/system_ext/bin/
 - [ ] zip 里**没有** `.bootfail` / `.bootcur` / `.bootok`（带上会让模块一装就自动回退）
 - [ ] zip 里**没有** `README.md` / `docs/` / `.github/` / `tools/`
 - [ ] `module.prop` 的 `versionCode` 比上一版大
+- [ ] `configuration.OPEN.CN.xml` 的 SMS 四项是开值（`tools\build.ps1` 会断言）
+- [ ] `system/framework/telephony-common.jar` 不是原版（`tools\build.ps1` 会断言）
+- [ ] `v50_soi_hal` 的 `files/bin/...service` 是 `0100755`
 
-`tools/build.ps1` 会自动检查前两项和倒数第二项。
+`tools/build.ps1` 会自动检查权限位、`module.prop` 位置、jar/配置断言与 `versionCode` 递增；
+`tools/build_soi_hal.ps1` 会检查 SOI HAL 二进制权限位、是否混入备份文件、以及 5 条空转规则是否被重新加回。
 
 ---
 
 ## 测试安装
 
 ```sh
-# 推到设备
-adb push dist/v50_ims_volte_v0.61.zip /sdcard/
+# 推到设备（两个模块）
+adb push dist/v50_ims_volte_v0.62.zip dist/v50_soi_hal_v0.3.zip /sdcard/
 
-# APatch 里安装，或者命令行：
-adb shell su -c "apd module install /sdcard/v50_ims_volte_v0.61.zip"
+# APatch 里安装，或者命令行（顺序不限）：
+adb shell su -c "apd module install /sdcard/v50_ims_volte_v0.62.zip"
+adb shell su -c "apd module install /sdcard/v50_soi_hal_v0.3.zip"
 adb reboot
 ```
 

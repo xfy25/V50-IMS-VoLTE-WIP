@@ -1,0 +1,6 @@
+id=v50_soi_hal
+name=LG V50 SOI HAL (SMS)
+version=0.3
+versionCode=4
+author=v50ims
+description=Stock LM-V500N V50040b SOI HAL (vendor.lge.hardware.soi@1.0::ISoi/default). No system/vendor overlay: post-fs-data mounts three overlayfs merges (vendor/lib64, vendor/lib64/hw, vendor/etc/vintf/manifest) that keep every original file. v0.3 starts the registrar at late_start (before com.lge.ims), applies SELinux rules in one magiskpolicy --apply, and never uses am force-stop/start-service on the normal boot path; the watchdog restarts the registrar and only restarts IMS after ISoi is registered again.

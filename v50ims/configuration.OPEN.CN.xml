@@ -6,7 +6,7 @@
         <param name="config_xml_file" type="TEXT" value="configuration.OPEN.CN.xml"/>
         <param name="media_xml_file" type="TEXT" value=""/>
         <param name="xml_base_tag" type="TEXT" value="0"/>
-        <param name="config_xml_modified_time" type="TEXT" value="104"/>
+        <param name="config_xml_modified_time" type="TEXT" value="105"/>
         <param name="IMSI" type="TEXT" value="0"/>
         <param name="make_db_on_next_time" type="TEXT" value="0"/>
         <param name="gpri_date" type="TEXT" value="0"/>
@@ -940,7 +940,7 @@ header_names=Content-Type From Request-Disposition Retry-After To Call-ID&#xA;
         <param name="property" type="INTEGER" value="1"/>
         <param name="common_psi" type="TEXT" value=""/>
         <param name="sdm_sms_format" type="TEXT" value="3gpp"/>
-        <param name="sdm_sms_over_ip_network" type="TEXT" value="false"/>
+        <param name="sdm_sms_over_ip_network" type="TEXT" value="true"/>
     </table>
     <table id="lgims_com_sip_sms">
         <param name="id" type="INTEGER" value="0"/>
@@ -1408,7 +1408,7 @@ bNeedToAddSIPInstanceParam=true"/>
         <param name="lbo_pcscf_address_type_10" type="TEXT" value=""/>
         <param name="voice_domain_preference_eutran" type="INTEGER" value="2"/>
         <param name="voice_domain_preference_utran" type="INTEGER" value="1"/>
-        <param name="sms_over_ip_networks_indication" type="TEXT" value="0"/>
+        <param name="sms_over_ip_networks_indication" type="TEXT" value="1"/>
         <param name="keep_alive_enabled" type="TEXT" value=""/>
         <param name="mobility_management_ims_voice_termination" type="TEXT" value=""/>
         <param name="regretrybasetime" type="INTEGER" value="-1"/>
@@ -1471,7 +1471,7 @@ bNeedToAddSIPInstanceParam=true"/>
         <param name="LGE_FEATURE_VOLTE" type="INTEGER" value="1"/>
         <param name="LGE_FEATURE_VOWIFI" type="INTEGER" value="1"/>
         <param name="LGE_FEATURE_VT" type="INTEGER" value="0"/>
-        <param name="LGE_FEATURE_SMS" type="INTEGER" value="0"/>
+        <param name="LGE_FEATURE_SMS" type="INTEGER" value="1"/>
         <param name="LGE_FEATURE_RCS" type="INTEGER" value="0"/>
         <param name="LGE_FEATURE_EAB" type="INTEGER" value="0"/>
         <param name="LGE_FEATURE_SPI" type="INTEGER" value="0"/>
